@@ -17,17 +17,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     return Scaffold(
       backgroundColor: whiteColor,
       body: SingleChildScrollView(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              LargeHeadingWidget(
-                heading: 'Forgot Password',
-                subHeading: 'Enter yout email to continue your password reset',
-                headingTextSize: 35,
-                subheadingTextSize: 20,
-              ),
-              ResetForm(),
-            ]),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          LargeHeadingWidget(
+            heading: 'Forgot Password',
+            subHeading: 'Enter yout email to continue your password reset',
+            headingTextSize: 35,
+            subheadingTextSize: 20,
+          ),
+          ResetForm(),
+        ]),
       ),
     );
   }

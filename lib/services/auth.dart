@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bechdal_app/constants/widgets.dart';
-import 'package:bechdal_app/screens/auth/email_verify_screen.dart';
 import 'package:bechdal_app/screens/auth/phone_otp_screen.dart';
 import 'package:bechdal_app/screens/location_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,11 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../admin/admin_home.dart';
+import '../admin/const.dart';
+
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final storage = const FlutterSecureStorage();
   User? currentUser = FirebaseAuth.instance.currentUser;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference admin = FirebaseFirestore.instance.collection('admin');
   CollectionReference categories =
       FirebaseFirestore.instance.collection('categories');
   CollectionReference products =
@@ -23,7 +26,8 @@ class Auth {
   CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
 
-  Future<void> getAdminCredentialPhoneNumber(BuildContext context, user) async {
+  Future<void> getAdminCredentialPhoneNumber(BuildContext context, user,
+      {bool isAdmin = false}) async {
     final QuerySnapshot userDataQuery =
         await users.where('uid', isEqualTo: user!.uid).get();
     List<DocumentSnapshot> wasUserPresentInDatabase = userDataQuery.docs;
@@ -34,7 +38,8 @@ class Auth {
     }
   }
 
-  Future<void> registerWithPhoneNumber(user, context) async {
+  Future<void> registerWithPhoneNumber(user, context,
+      {bool isAdmin = false}) async {
     final uid = user!.uid;
     final mobileNo = user!.phoneNumber;
     final email = user!.email;
@@ -44,7 +49,8 @@ class Auth {
       'mobile': mobileNo,
       'email': email,
       'name': '',
-      'address': ''
+      'address': '',
+      'admin': isAdmin
     }).then((value) {
       if (kDebugMode) {
         print('user added successfully');
@@ -104,7 +110,8 @@ class Auth {
   }
 
   Future<void> signInwithPhoneNumber(
-      String verificationId, String smsCode, BuildContext context) async {
+      String verificationId, String smsCode, BuildContext context,
+      {bool isAdmin = false}) async {
     try {
       loadingDialogBox(context, 'Please Wait');
       AuthCredential credential = PhoneAuthProvider.credential(
@@ -115,7 +122,8 @@ class Auth {
 
       Navigator.pop(context);
       if (userCredential != null) {
-        getAdminCredentialPhoneNumber(context, userCredential.user);
+        getAdminCredentialPhoneNumber(context, userCredential.user,
+            isAdmin: isAdmin);
       } else {
         wrongDetailsAlertBox('Login Failed, Please retry again.', context);
       }
@@ -127,7 +135,9 @@ class Auth {
     }
   }
 
-  static Future<User?> signInWithGoogle({required BuildContext context}) async {
+  static Future<User?> signInWithGoogle({
+    required BuildContext context,
+  }) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
 
@@ -139,6 +149,7 @@ class Auth {
             await auth.signInWithPopup(authProvider);
 
         user = userCredential.user;
+        AppConstant.userId = user!.uid;
       } catch (e) {
         if (kDebugMode) {
           print(e);
@@ -164,6 +175,7 @@ class Auth {
               await auth.signInWithCredential(credential);
 
           user = userCredential.user;
+          AppConstant.userId = user!.uid;
         } on FirebaseAuthException catch (e) {
           if (e.code == 'account-exists-with-different-credential') {
             customSnackBar(
@@ -194,22 +206,25 @@ class Auth {
       String? firstName,
       String? lastName,
       required String password,
-      required bool isLoginUser}) async {
-    DocumentSnapshot result = await users.doc(email).get();
+      required bool isLoginUser,
+      bool isAdmin = false}) async {
+    DocumentSnapshot? result = await users.doc(email).get();
+
     if (kDebugMode) {
       print(result);
     }
     try {
       if (isLoginUser) {
         print('loggin user');
-        signInWithEmail(context, email, password);
+        signInWithEmail(context, email, password, isAdmin);
       } else {
         if (result.exists) {
           customSnackBar(
               context: context,
               content: 'An account already exists with this email');
         } else {
-          registerWithEmail(context, email, password, firstName!, lastName!);
+          registerWithEmail(
+              context, email, password, firstName!, lastName!, isAdmin);
         }
       }
     } catch (e) {
@@ -218,7 +233,8 @@ class Auth {
     return result;
   }
 
-  signInWithEmail(BuildContext context, String email, String password) async {
+  signInWithEmail(
+      BuildContext context, String email, String password, bool isAdmin) async {
     try {
       loadingDialogBox(context, 'Validating details');
       final credential = await FirebaseAuth.instance
@@ -228,7 +244,12 @@ class Auth {
       }
       Navigator.pop(context);
       if (credential.user!.uid != null) {
-        Navigator.pushReplacementNamed(context, LocationScreen.screenId);
+        AppConstant.userId = credential.user!.uid;
+        if (isAdmin == false) {
+          Navigator.pushReplacementNamed(context, LocationScreen.screenId);
+        } else {
+          Navigator.pushReplacementNamed(context, AdminHome.screenId);
+        }
       } else {
         customSnackBar(
             context: context, content: 'Please check with your credentials');
@@ -247,7 +268,7 @@ class Auth {
   }
 
   void registerWithEmail(BuildContext context, String email, String password,
-      String firstName, String lastName) async {
+      String firstName, String lastName, bool isAdmin) async {
     try {
       loadingDialogBox(context, 'Validating details');
 
@@ -256,16 +277,17 @@ class Auth {
         email: email,
         password: password,
       );
-
       return users.doc(credential.user!.uid).set({
         'uid': credential.user!.uid,
         'name': "$firstName $lastName",
         'email': email,
         'mobile': '',
-        'address': ''
+        'address': '',
+        'admin': isAdmin
       }).then((value) async {
+        AppConstant.userId = credential.user!.uid;
         await credential.user!.sendEmailVerification().then((value) {
-          Navigator.pushReplacementNamed(context, EmailVerifyScreen.screenId);
+          Navigator.pushReplacementNamed(context, LocationScreen.screenId);
         });
 
         customSnackBar(context: context, content: 'Registered successfully');

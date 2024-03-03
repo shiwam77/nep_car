@@ -2,13 +2,9 @@ import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/provider/category_provider.dart';
 import 'package:bechdal_app/provider/product_provider.dart';
 import 'package:bechdal_app/screens/product/product_card.dart';
-import 'package:bechdal_app/screens/product/product_details_screen.dart';
 import 'package:bechdal_app/services/auth.dart';
-import 'package:bechdal_app/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -29,22 +25,22 @@ class _ProductListingState extends State<ProductListing> {
     var productProvider = Provider.of<ProductProvider>(context);
     var categoryProvider = Provider.of<CategoryProvider>(context);
     final numberFormat = NumberFormat('##,##,##0');
-    return FutureBuilder<QuerySnapshot>(
-        future: (widget.isProductByCategory == true)
+    return StreamBuilder(
+        stream: (widget.isProductByCategory == true)
             ? categoryProvider.selectedCategory == 'Cars'
                 ? authService.products
                     .orderBy('posted_at')
                     .where('category',
                         isEqualTo: categoryProvider.selectedCategory)
-                    .get()
+                    .snapshots()
                 : authService.products
                     .orderBy('posted_at')
                     .where('category',
                         isEqualTo: categoryProvider.selectedCategory)
                     .where('subcategory',
                         isEqualTo: categoryProvider.selectedSubCategory)
-                    .get()
-            : authService.products.orderBy('posted_at').get(),
+                    .snapshots()
+            : authService.products.orderBy('posted_at').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading products..'));

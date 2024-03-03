@@ -14,6 +14,7 @@ class CategoryProvider with ChangeNotifier {
 
   setCategory(selectedCategory) {
     this.selectedCategory = selectedCategory;
+
     notifyListeners();
   }
 

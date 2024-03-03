@@ -13,8 +13,9 @@ class LargeHeadingWidget extends StatefulWidget {
   final String? anotherTaglineText;
   final Color? anotherTaglineColor;
   final bool? taglineNavigation;
+  double? size;
 
-  const LargeHeadingWidget(
+  LargeHeadingWidget(
       {Key? key,
       required this.heading,
       required this.subHeading,
@@ -24,6 +25,7 @@ class LargeHeadingWidget extends StatefulWidget {
       this.headingTextColor,
       this.anotherTaglineText,
       this.anotherTaglineColor,
+      this.size,
       this.taglineNavigation})
       : super(key: key);
 
@@ -35,7 +37,7 @@ class _LargeHeadingWidgetState extends State<LargeHeadingWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 250,
+      height: widget.size ?? 250,
       child: Padding(
         padding: const EdgeInsets.only(top: 100),
         child: Column(

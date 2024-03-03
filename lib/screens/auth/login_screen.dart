@@ -1,7 +1,6 @@
 import 'package:bechdal_app/components/large_heading_widget.dart';
 import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/forms/login_form.dart';
-
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,11 +22,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _body() {
     return SingleChildScrollView(
-      child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: const [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         LargeHeadingWidget(
             heading: 'Welcome', subHeading: 'Sign In to Continue'),
-        LogInForm(),
+        const LogInForm(),
       ]),
     );
   }

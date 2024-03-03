@@ -1,22 +1,23 @@
 import 'dart:async';
 
 import 'package:bechdal_app/constants/colors.dart';
-import 'package:bechdal_app/screens/main_navigatiion_screen.dart';
-import 'package:bechdal_app/screens/welcome_screen.dart';
 import 'package:bechdal_app/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class SplashScreen extends StatefulWidget {
-  static const String screenId = 'splash_screen';
-  const SplashScreen({Key? key}) : super(key: key);
+import 'admin_home.dart';
+import 'admin_welcome_screen.dart';
+
+class AdminSplashScreen extends StatefulWidget {
+  static const String screenId = 'admin_splash_screen';
+  const AdminSplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<AdminSplashScreen> createState() => _AdminSplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _AdminSplashScreenState extends State<AdminSplashScreen> {
   Auth authService = Auth();
   @override
   void initState() {
@@ -25,14 +26,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   permissionBasedNavigationFunc() {
-    Timer(const Duration(seconds: 4), () async {
+    Timer(const Duration(seconds: 5), () async {
       if (mounted) {
         FirebaseAuth.instance.authStateChanges().listen((User? user) async {
           if (user == null) {
-            Navigator.pushReplacementNamed(context, WelcomeScreen.screenId);
-          } else {
             Navigator.pushReplacementNamed(
-                context, MainNavigationScreen.screenId);
+                context, AdminWelcomeScreen.screenId);
+          } else {
+            Navigator.pushReplacementNamed(context, AdminHome.screenId);
           }
         });
       }

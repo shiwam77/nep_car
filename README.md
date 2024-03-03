@@ -76,10 +76,4 @@ Bechdal is an Flutter based Hybrid app, mainly created to learn advance concepts
     <td><img src="./assets/screenshots/chat_user.jpeg" align="right" alt="2" width = 320 height = 600px></td>
   </tr>
   </table>
- 
- 
- 
- 
-  
-</table>
 

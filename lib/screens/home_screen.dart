@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:bechdal_app/screens/category/category_widget.dart';
 import 'package:bechdal_app/components/main_appbar_with_search.dart';
 import 'package:bechdal_app/components/product_listing_widget.dart';
 import 'package:bechdal_app/constants/colors.dart';
@@ -12,8 +9,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
@@ -33,15 +30,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _current = 0;
   late FocusNode searchNode;
 
-  Future<List<String>> downloadBannerImageUrlList() async {
+  List<String> downloadBannerImageUrlList() {
     List<String> bannerUrlList = [];
-    final ListResult storageRef =
-        await FirebaseStorage.instance.ref().child('banner').listAll();
-    List<Reference> bannerRef = storageRef.items;
-    await Future.forEach<Reference>(bannerRef, (image) async {
-      final String fileUrl = await image.getDownloadURL();
-      bannerUrlList.add(fileUrl);
-    });
+    bannerUrlList.add(
+        'https://img.freepik.com/premium-vector/super-sale-only-today-3d-banner-template-design-background_416835-439.jpg?size=626&ext=jpg&ga=GA1.1.1090300621.1681291694&semt=ais');
+    bannerUrlList.add(
+        'https://img.freepik.com/premium-psd/super-sale-d-text-box-with-discount-3d-rendering_220664-478.jpg?size=626&ext=jpg&ga=GA1.1.1090300621.1681291694&semt=ais');
+    bannerUrlList.add(
+        "https://img.freepik.com/free-psd/super-sale-banner_1393-365.jpg?1&w=996&t=st=1681292000~exp=1681292600~hmac=8f3dcf04f2c6805a460b937fe6db54292224b971074a5eac3cb922ec5627bf65");
+
     return bannerUrlList;
   }
 
@@ -83,13 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
-          return customSnackBar(
-              context: context, content: "Something went wrong");
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            customSnackBar(context: context, content: "Something went wrong");
+          });
         }
 
         if (snapshot.hasData && !snapshot.data!.exists) {
-          return customSnackBar(
-              context: context, content: "Addrress not selected");
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            customSnackBar(context: context, content: "Addrress not selected");
+          });
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
@@ -105,23 +104,23 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             return locationTextWidget(location: data['address']);
           }
-          return locationTextWidget(location: 'Update Location');
+          return const locationTextWidget(location: 'Update Location');
         }
-        return locationTextWidget(location: 'Fetching location');
+        return const locationTextWidget(location: 'Fetching location');
       },
     );
   }
 
   Widget homeBodyWidget() {
     return SingleChildScrollView(
-      physics: ScrollPhysics(),
+      physics: const ScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               width: double.infinity,
               height: 40,
               child: InkWell(
@@ -134,47 +133,29 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               child: Column(
                 children: [
-                  CategoryWidget(),
-                  FutureBuilder(
-                    future: downloadBannerImageUrlList(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<String>> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          height: 250,
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: secondaryColor,
-                          )),
-                        );
-                      } else {
-                        if (snapshot.hasError) {
-                          return const Text(
-                              'Currently facing issue in banner loading');
-                        } else {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: CarouselSlider.builder(
-                              itemCount: snapshot.data!.length,
-                              options: CarouselOptions(
-                                autoPlay: true,
-                                viewportFraction: 1.0,
-                              ),
-                              itemBuilder: (context, index, realIdx) {
-                                return CachedNetworkImage(
-                                  imageUrl: snapshot.data![index],
-                                );
-                              },
-                            ),
-                          );
-                        }
-                      }
-                    },
+                  // CategoryWidget(),
+                  const SizedBox(
+                    height: 20,
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: CarouselSlider.builder(
+                      itemCount: downloadBannerImageUrlList().length,
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        viewportFraction: 1.0,
+                      ),
+                      itemBuilder: (context, index, realIdx) {
+                        return CachedNetworkImage(
+                          imageUrl: downloadBannerImageUrlList()[index],
+                        );
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
-            ProductListing()
+            const ProductListing()
           ],
         ),
       ),

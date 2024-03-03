@@ -2,8 +2,8 @@ import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/models/product_model.dart';
 import 'package:bechdal_app/provider/product_provider.dart';
 import 'package:bechdal_app/services/auth.dart';
-import 'package:bechdal_app/services/user.dart';
 import 'package:bechdal_app/services/search.dart';
+import 'package:bechdal_app/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +71,7 @@ class _MainAppBarWithSearchState extends State<MainAppBarWithSearch> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Bechdal",
+                  "NepCar",
                   style: TextStyle(
                     color: blackColor,
                     fontSize: 34,

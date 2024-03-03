@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "402872397877",
-    "project_id": "bechdal-app",
-    "storage_bucket": "bechdal-app.appspot.com"
+    "project_number": "609631091484",
+    "project_id": "nepcar-528a8",
+    "storage_bucket": "nepcar-528a8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:402872397877:android:fd38599e70fe16992b417c",
+        "mobilesdk_app_id": "1:609631091484:android:7c56921428f6ba6290d8d9",
         "android_client_info": {
           "package_name": "com.example.bechdal_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "402872397877-lm2m3nq8s1nulv0h8qvogres0a0qto7t.apps.googleusercontent.com",
+          "client_id": "609631091484-p6acpqicmmcd52gnvt0tk0iefn6monqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bechdal_app",
+            "certificate_hash": "63ba7e3ab531697691f65b7a60d1730a91e9e487"
+          }
+        },
+        {
+          "client_id": "609631091484-16qpkn4qu3ku2rap2f4b8r61mvgr7md3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB47pbGz_-gVNj9epBAm7zBxaHdhAVJXXw"
+          "current_key": "AIzaSyCJdnGNKDhJJPh0TSbX8HEvFdrXMP9-vE4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "402872397877-lm2m3nq8s1nulv0h8qvogres0a0qto7t.apps.googleusercontent.com",
+              "client_id": "609631091484-16qpkn4qu3ku2rap2f4b8r61mvgr7md3.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

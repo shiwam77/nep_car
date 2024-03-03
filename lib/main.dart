@@ -24,6 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'admin/const.dart';
 import 'screens/auth/reset_password_screen.dart';
 import 'screens/category/category_list_screen.dart';
 import 'screens/chat/chat_screen.dart';
@@ -34,6 +35,11 @@ void main() async {
   await FirebaseAppCheck.instance.activate(
     webRecaptchaSiteKey: 'recaptcha-v3-site-key',
   );
+  AppConstant.userType = "user";
+
+  // FirebaseFirestore _db = FirebaseFirestore.instance;
+  // _db.enablePersistence(const PersistenceSettings(synchronizeTabs: true));
+
   runApp(
     MultiProvider(
       providers: [

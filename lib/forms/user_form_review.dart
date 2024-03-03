@@ -280,13 +280,9 @@ class _UserFormReviewState extends State<UserFormReview> {
             ));
           }
           _nameController.text = snapshot.data!['name'] ?? '';
+          String? mob = snapshot.data!['mobile'];
           _phoneNumberController.text =
-              snapshot.data!['contact_details']['mobile'] != null
-                  ? snapshot.data!['contact_details']['mobile'].substring(3)
-                  : snapshot.data!['mobile'] != null
-                      ? snapshot.data!['mobile'].substring(3)
-                      : '';
-          print(snapshot.data!.data());
+              mob!.isNotEmpty ? snapshot.data!['mobile'].substring(3) : '';
           _emailController.text = snapshot.data!['email'] ?? '';
           _addressController.text = snapshot.data!['address'] ?? '';
           return SingleChildScrollView(

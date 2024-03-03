@@ -1,13 +1,14 @@
 import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/constants/widgets.dart';
-import 'package:bechdal_app/screens/auth/login_screen.dart';
-import 'package:bechdal_app/screens/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  static const screenId = 'welcome_screen';
-  const WelcomeScreen({Key? key}) : super(key: key);
+import 'admin_login.dart';
+import 'admin_signup.dart';
+
+class AdminWelcomeScreen extends StatelessWidget {
+  static const screenId = 'admin_welcome_screen';
+  const AdminWelcomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +24,14 @@ class WelcomeScreen extends StatelessWidget {
       children: [
         SizedBox(
           width: double.infinity,
-          height: 200,
+          height: 250,
           child: Padding(
             padding: const EdgeInsets.only(top: 80, left: 25),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'NepCar',
+                  'Admin DashBoard For NepCar',
                   style: TextStyle(
                     color: blackColor,
                     fontSize: 40,
@@ -38,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Sell your un-needs here',
+                  'Manage your data from  here',
                   style: TextStyle(
                     color: blackColor,
                     fontSize: 25,
@@ -77,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
               textColor: blackColor,
               text: 'Log In',
               onPressed: () {
-                Navigator.pushNamed(context, LoginScreen.screenId);
+                Navigator.pushNamed(context, AdminLoginScreen.screenId);
               }),
         ),
         const SizedBox(
@@ -91,7 +92,7 @@ class WelcomeScreen extends StatelessWidget {
               text: 'Sign Up',
               textColor: whiteColor,
               onPressed: () {
-                Navigator.pushNamed(context, RegisterScreen.screenId);
+                Navigator.pushNamed(context, AdminRegisterScreen.screenId);
               }),
         ),
         const SizedBox(

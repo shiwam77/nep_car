@@ -16,7 +16,7 @@
 </intent>
 </queries>
    <application
-        android:label="Bechdal"
+        android:label="NepCar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

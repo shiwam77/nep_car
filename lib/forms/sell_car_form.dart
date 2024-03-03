@@ -88,41 +88,41 @@ class _SellCarFormState extends State<SellCarForm> {
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    // it is used to get context
-    var categoryProvider = Provider.of<CategoryProvider>(context);
-    setState(() {
-      _carModelNameController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['brand'];
-      _yearController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['year'];
-      _priceController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['price'];
-      _fuelController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['fuel_type'];
-      _transmissionController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['transmission_type'];
-      _kmDrivenController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['km_driven'];
-      _ownerController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['owners'];
-      _titleController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['title'];
-      _descController.text = categoryProvider.formData.isEmpty
-          ? ""
-          : categoryProvider.formData['description'];
-    });
-    super.didChangeDependencies();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   // it is used to get context
+  //   var categoryProvider = Provider.of<CategoryProvider>(context);
+  //   setState(() {
+  //     _carModelNameController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['brand'];
+  //     _yearController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['year'];
+  //     _priceController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['price'];
+  //     _fuelController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['fuel_type'];
+  //     _transmissionController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['transmission_type'];
+  //     _kmDrivenController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['km_driven'];
+  //     _ownerController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['owners'];
+  //     _titleController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['title'];
+  //     _descController.text = categoryProvider.formData.isEmpty
+  //         ? ""
+  //         : categoryProvider.formData['description'];
+  //   });
+  //   super.didChangeDependencies();
+  // }
 
   final List<String> _fuelType = ['Diesel', 'Petrol', 'Electric', 'LPG'];
   final List<String> _transmissionType = ['Automatic', 'Manual'];
@@ -164,6 +164,7 @@ class _SellCarFormState extends State<SellCarForm> {
                   : categoryProvider.imageUploadedUrls,
               'posted_at': DateTime.now().microsecondsSinceEpoch,
               'favourites': [],
+              'rating': "0.0"
             });
             if (categoryProvider.imageUploadedUrls.isNotEmpty) {
               Navigator.pushNamed(context, UserFormReview.screenId);
@@ -348,7 +349,7 @@ class _SellCarFormState extends State<SellCarForm> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 InkWell(
@@ -571,7 +572,7 @@ class _SellCarFormState extends State<SellCarForm> {
                         numOfShowImages:
                             categoryProvider.imageUploadedUrls.length,
                         imageUrls: categoryProvider.imageUploadedUrls)
-                    : SizedBox(),
+                    : const SizedBox(),
               ],
             ),
           ),

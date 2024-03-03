@@ -30,7 +30,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   String verificationIdFinal = "";
   @override
   void initState() {
-    _countryCodeController = TextEditingController(text: '+91');
+    _countryCodeController = TextEditingController(text: '+977');
     _phoneNumberController = TextEditingController();
     _countryCodeNode = FocusNode();
     _phoneNumberNode = FocusNode();

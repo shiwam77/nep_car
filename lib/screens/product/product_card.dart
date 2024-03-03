@@ -130,10 +130,13 @@ class _ProductCardState extends State<ProductCard> {
                         width: 3,
                       ),
                       Flexible(
-                        child: Text(
-                          address,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        child: SizedBox(
+                          width: 50,
+                          child: Text(
+                            address,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                     ],

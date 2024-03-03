@@ -89,11 +89,13 @@ dependencies:
   search_page: ^2.0.0+1
   flutter_chat_bubble: ^2.0.0
   custom_pop_up_menu: ^1.2.4
+  dropdown_button2: ^2.0.0
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  firebase_core_platform_interface: 4.5.1
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

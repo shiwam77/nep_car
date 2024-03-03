@@ -1,7 +1,7 @@
 import 'package:bechdal_app/components/large_heading_widget.dart';
-import 'package:bechdal_app/screens/main_navigatiion_screen.dart';
 import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/constants/widgets.dart';
+import 'package:bechdal_app/screens/main_navigatiion_screen.dart';
 import 'package:bechdal_app/services/user.dart';
 import 'package:bechdal_app/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,7 +37,7 @@ class _LocationScreenState extends State<LocationScreen> {
   Widget _body(context) {
     return Column(
       children: [
-        const LargeHeadingWidget(
+        LargeHeadingWidget(
             heading: 'Choose Location',
             subheadingTextSize: 16,
             headingTextSize: 30,
@@ -223,7 +223,7 @@ class _BottomLocationPermissionWidgetState
                           vertical: 10, horizontal: 20),
                       child: CSCPicker(
                         layout: Layout.vertical,
-                        defaultCountry: DefaultCountry.India,
+                        defaultCountry: CscCountry.Nepal,
                         flagState: CountryFlag.DISABLE,
                         dropdownDecoration:
                             const BoxDecoration(shape: BoxShape.rectangle),

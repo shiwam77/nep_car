@@ -71,7 +71,7 @@ bodyWidget({required Auth authService, required UserService firebaseUser}) {
             );
           }
           if (snapshot.data!.docs.length == 0) {
-            return Container(
+            return SizedBox(
               height: MediaQuery.of(context).size.height - 50,
               child: const Center(
                 child: Text('No Posts Added by you...'),

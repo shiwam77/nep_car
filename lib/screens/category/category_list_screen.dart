@@ -60,7 +60,7 @@ class CategoryListScreen extends StatelessWidget {
                         categoryProvider.setCategory(doc!['category_name']);
                         categoryProvider.setCategorySnapshot(doc);
                         if (isForForm == true) {
-                          if (doc['subcategory'] == null) {
+                          if (doc['subcategory'].length == 0) {
                             Navigator.of(context)
                                 .pushNamed(SellCarForm.screenId);
                           } else {
@@ -71,7 +71,7 @@ class CategoryListScreen extends StatelessWidget {
                                         doc: doc, isForForm: true)));
                           }
                         } else {
-                          if (doc['subcategory'] == null) {
+                          if (doc['subcategory'].length == 0) {
                             Navigator.of(context)
                                 .pushNamed(ProductByCategory.screenId);
                           } else {
@@ -91,7 +91,7 @@ class CategoryListScreen extends StatelessWidget {
                           fontSize: 15,
                         ),
                       ),
-                      trailing: doc['subcategory'] != null
+                      trailing: doc['subcategory'].length != 0
                           ? const Icon(
                               Icons.arrow_forward_ios,
                               size: 12,

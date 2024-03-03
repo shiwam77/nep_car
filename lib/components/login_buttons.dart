@@ -41,11 +41,12 @@ class _LoginInButtonsState extends State<LoginInButtons> {
           height: 15,
         ),
         InkWell(
-          onTap: () async {
-            User? user = await Auth.signInWithGoogle(context: context);
-            if (user != null) {
-              authService.getAdminCredentialPhoneNumber(context, user);
-            }
+          onTap: () {
+            Auth.signInWithGoogle(context: context).then((User? user) {
+              if (user != null) {
+                authService.getAdminCredentialPhoneNumber(context, user);
+              }
+            });
           },
           child: CustomIconButton(
             text: 'Sign In with Google',
