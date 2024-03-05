@@ -1,13 +1,16 @@
 import 'dart:async';
 
 import 'package:bechdal_app/constants/colors.dart';
+import 'package:bechdal_app/e_com_by_admin/screen/payment_screen.dart';
 import 'package:bechdal_app/provider/product_provider.dart';
 import 'package:bechdal_app/screens/chat/user_chat_screen.dart';
 import 'package:bechdal_app/services/auth.dart';
 import 'package:bechdal_app/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +20,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetail extends StatefulWidget {
   static const screenId = 'product_details_screen';
-  const ProductDetail({Key? key}) : super(key: key);
+  final bool? byAdmin;
+  final bool? isDetailPage;
+
+  const ProductDetail(
+      {Key? key, this.byAdmin = false, this.isDetailPage = false})
+      : super(key: key);
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -31,14 +39,28 @@ class _ProductDetailState extends State<ProductDetail> {
   int _index = 0;
   bool isLiked = false;
   List fav = [];
-  double _userRating = 3.0;
-  int _ratingBarMode = 1;
-  double _initialRating = 2.0;
   IconData? _selectedIcon;
   Auth auth = Auth();
+  int creditPoint = 0;
+  double rewards = 0.0;
+  List<String> comments = [];
+
+  TextEditingController commentController = TextEditingController();
+
+  DocumentSnapshot<Object?>? value;
+
+  Future<DocumentSnapshot<Object?>?>? getUserData() async {
+    return firebaseUser.getUserData().then((value) {
+      this.value = value;
+      creditPoint = value['credit_point'];
+      rewards = value['rewards_point'];
+      return value;
+    });
+  }
 
   @override
   void initState() {
+    getUserData();
     Timer(Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -127,7 +149,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 )));
   }
 
-  _body({
+  Widget _body({
     required DocumentSnapshot<Object?> data,
     required String formattedDate,
     required ProductProvider productProvider,
@@ -158,7 +180,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   CircularProgressIndicator(
                                     color: secondaryColor,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Text(
@@ -216,10 +238,10 @@ class _ProductDetailState extends State<ProductDetail> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _ratingBar(data),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
+                                  // _ratingBar(data),
+                                  // SizedBox(
+                                  //   height: 10,
+                                  // ),
                                   Row(
                                     children: [
                                       Text(
@@ -236,12 +258,12 @@ class _ProductDetailState extends State<ProductDetail> {
                                         Text('[${data['year']}]')
                                     ],
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 2,
                                   ),
                                   Text(
-                                    '\u{20b9} ${formattedPrice}',
-                                    style: TextStyle(
+                                    '\u{20b9} $formattedPrice',
+                                    style: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -403,287 +425,319 @@ class _ProductDetailState extends State<ProductDetail> {
                                         ),
                                       ),
                                     ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
-                                  Text(
+                                  const Text(
                                     'Description',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(data['description']),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10,
-                                                ),
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                color: disabledColor
-                                                    .withOpacity(0.3),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    if (data['subcategory'] ==
-                                                            'Mobile Phones' ||
-                                                        data['subcategory'] ==
-                                                            null)
-                                                      Text(
-                                                        'Brand: ${data['brand']}',
-                                                        style: TextStyle(
-                                                          color: blackColor,
-                                                        ),
-                                                      ),
-                                                    (data['subcategory'] ==
-                                                                'Accessories' ||
-                                                            data['subcategory'] ==
-                                                                'Tablets' ||
-                                                            data['subcategory'] ==
-                                                                'For Sale: House & Apartments' ||
-                                                            data['subcategory'] ==
-                                                                'For Rent: House & Apartments')
-                                                        ? Text(
-                                                            'Type: ${data['type']}',
-                                                            style: TextStyle(
-                                                              color: blackColor,
-                                                            ),
-                                                          )
-                                                        : SizedBox(),
-                                                    (data['subcategory'] ==
-                                                                'For Sale: House & Apartments' ||
-                                                            data['subcategory'] ==
-                                                                'For Rent: House & Apartments')
-                                                        ? Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                'Bedrooms: ${data['bedroom']}',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blackColor,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                'Bathrooms: ${data['bathroom']}',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blackColor,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                'Furnished Type: ${data['furnishing']}',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blackColor,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                'Construction Status: ${data['construction_status']}',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blackColor,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                'Floors: ${data['floors']}',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blackColor,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                  height: 20),
-                                                            ],
-                                                          )
-                                                        : SizedBox(),
-                                                    Text(
-                                                      'Posted At: ${formattedDate}',
-                                                      style: TextStyle(
-                                                        color: blackColor,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: blackColor,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor: primaryColor,
-                                        radius: 40,
-                                        child: CircleAvatar(
-                                          backgroundColor: secondaryColor,
-                                          radius: 37,
-                                          child: Icon(
-                                            CupertinoIcons.person,
-                                            color: whiteColor,
-                                            size: 40,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Expanded(
-                                        child: ListTile(
-                                          title: Text(
-                                            productProvider
-                                                .sellerDetails!['name']
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
-                                          ),
-                                          subtitle: Text(
-                                            'View Profile',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: linkColor,
-                                            ),
-                                          ),
-                                          trailing: IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: linkColor,
-                                                size: 12,
-                                              )),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10),
-                                  Divider(
-                                    color: blackColor,
-                                  ),
-                                  Text(
-                                    'Ad Post at:',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    height: 200,
-                                    color: disabledColor.withOpacity(0.3),
-                                    child: Stack(
-                                      children: [
-                                        Center(
-                                          child: GoogleMap(
-                                            initialCameraPosition:
-                                                CameraPosition(
-                                              zoom: 15,
-                                              target: LatLng(
-                                                location.latitude,
-                                                location.longitude,
-                                              ),
-                                            ),
-                                            mapType: MapType.normal,
-                                            onMapCreated: (GoogleMapController
-                                                controller) {
-                                              setState(() {
-                                                _mapController = controller;
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                        Center(
-                                            child: Icon(
-                                          Icons.location_pin,
-                                          color: Colors.red,
-                                          size: 35,
-                                        )),
-                                        Center(
-                                          child: CircleAvatar(
-                                            radius: 60,
-                                            backgroundColor:
-                                                blackColor.withOpacity(0.1),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          right: 4,
-                                          top: 4,
-                                          child: Material(
-                                            elevation: 4,
-                                            shape: Border.all(
-                                                color: disabledColor
-                                                    .withOpacity(0.2)),
-                                            child: IconButton(
-                                              icon: Icon(
-                                                Icons.alt_route_outlined,
-                                              ),
-                                              onPressed: () async {
-                                                await _mapLauncher(location);
-                                              },
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
                                   const SizedBox(
                                     height: 10,
                                   ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        'Ad Id: ${data['posted_at']}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(data['description']),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                                vertical: 10,
+                                              ),
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              color: disabledColor
+                                                  .withOpacity(0.3),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  if (data['subcategory'] ==
+                                                          'Mobile Phones' ||
+                                                      data['subcategory'] ==
+                                                          null)
+                                                    Text(
+                                                      'Brand: ${data['brand']}',
+                                                      style: TextStyle(
+                                                        color: blackColor,
+                                                      ),
+                                                    ),
+                                                  (data['subcategory'] ==
+                                                              'Accessories' ||
+                                                          data['subcategory'] ==
+                                                              'Tablets' ||
+                                                          data['subcategory'] ==
+                                                              'For Sale: House & Apartments' ||
+                                                          data['subcategory'] ==
+                                                              'For Rent: House & Apartments')
+                                                      ? Text(
+                                                          'Type: ${data['type']}',
+                                                          style: TextStyle(
+                                                            color: blackColor,
+                                                          ),
+                                                        )
+                                                      : SizedBox(),
+                                                  (data['subcategory'] ==
+                                                              'For Sale: House & Apartments' ||
+                                                          data['subcategory'] ==
+                                                              'For Rent: House & Apartments')
+                                                      ? Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              'Bedrooms: ${data['bedroom']}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blackColor,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Bathrooms: ${data['bathroom']}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blackColor,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Furnished Type: ${data['furnishing']}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blackColor,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Construction Status: ${data['construction_status']}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blackColor,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Floors: ${data['floors']}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    blackColor,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                height: 20),
+                                                          ],
+                                                        )
+                                                      : SizedBox(),
+                                                  Text(
+                                                    'Posted At: ${formattedDate}',
+                                                    style: TextStyle(
+                                                      color: blackColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
-                                      TextButton(
-                                        onPressed: () {},
-                                        child: Text(
-                                          'REPORT AD',
-                                          style: TextStyle(color: linkColor),
-                                        ),
-                                      )
                                     ],
                                   ),
-                                  SizedBox(
+                                  if (widget.byAdmin == false)
+                                    Divider(
+                                      color: blackColor,
+                                    ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  if (widget.byAdmin == false)
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: primaryColor,
+                                          radius: 28,
+                                          child: CircleAvatar(
+                                            backgroundColor: secondaryColor,
+                                            radius: 37,
+                                            child: Icon(
+                                              CupertinoIcons.person,
+                                              color: whiteColor,
+                                              size: 28,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: ListTile(
+                                            title: Text(
+                                              productProvider
+                                                  .sellerDetails!['name']
+                                                  .toUpperCase(),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  overflow:
+                                                      TextOverflow.ellipsis),
+                                            ),
+                                            subtitle: Text(
+                                              'View Profile',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: linkColor,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                            trailing: IconButton(
+                                                onPressed: () {},
+                                                icon: Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color: linkColor,
+                                                  size: 12,
+                                                )),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  if (widget.byAdmin == false)
+                                    SizedBox(height: 10),
+                                  if (widget.byAdmin == false)
+                                    Divider(
+                                      color: blackColor,
+                                    ),
+                                  if (widget.byAdmin == false)
+                                    const Text(
+                                      'Ad Post at:',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  if (widget.byAdmin == false)
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                  if (widget.byAdmin == false)
+                                    Container(
+                                      height: 200,
+                                      color: disabledColor.withOpacity(0.3),
+                                      child: Stack(
+                                        children: [
+                                          Center(
+                                            child: GoogleMap(
+                                              initialCameraPosition:
+                                                  CameraPosition(
+                                                zoom: 15,
+                                                target: LatLng(
+                                                  location.latitude,
+                                                  location.longitude,
+                                                ),
+                                              ),
+                                              mapType: MapType.normal,
+                                              onMapCreated: (GoogleMapController
+                                                  controller) {
+                                                setState(() {
+                                                  _mapController = controller;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          Center(
+                                              child: Icon(
+                                            Icons.location_pin,
+                                            color: Colors.red,
+                                            size: 35,
+                                          )),
+                                          Center(
+                                            child: CircleAvatar(
+                                              radius: 60,
+                                              backgroundColor:
+                                                  blackColor.withOpacity(0.1),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            right: 4,
+                                            top: 4,
+                                            child: Material(
+                                              elevation: 4,
+                                              shape: Border.all(
+                                                  color: disabledColor
+                                                      .withOpacity(0.2)),
+                                              child: IconButton(
+                                                icon: const Icon(
+                                                  Icons.alt_route_outlined,
+                                                ),
+                                                onPressed: () async {
+                                                  await _mapLauncher(location);
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  // Row(
+                                  //   mainAxisAlignment:
+                                  //       MainAxisAlignment.spaceBetween,
+                                  //   children: [
+                                  //     Text(
+                                  //       'Ad Id: ${data['posted_at']}',
+                                  //       style: const TextStyle(
+                                  //         fontWeight: FontWeight.bold,
+                                  //         fontSize: 16,
+                                  //       ),
+                                  //     ),
+                                  //     TextButton(
+                                  //       onPressed: () {},
+                                  //       child: Text(
+                                  //         'REPORT AD',
+                                  //         style: TextStyle(color: linkColor),
+                                  //       ),
+                                  //     )
+                                  //   ],
+                                  // ),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      showCommentBottomSheet(
+                                          productProvider: productProvider);
+                                    },
+                                    child: TextFormField(
+                                        enabled: false,
+                                        maxLength: 50,
+                                        readOnly: true,
+                                        keyboardType: TextInputType.text,
+                                        decoration: InputDecoration(
+                                          counter: SizedBox.shrink(),
+                                          labelText: 'Add Comment',
+                                          labelStyle: TextStyle(
+                                            color: greyColor,
+                                            fontSize: 14,
+                                          ),
+                                          errorStyle: const TextStyle(
+                                              color: Colors.red, fontSize: 10),
+                                          contentPadding:
+                                              const EdgeInsets.all(15),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              borderSide: BorderSide(
+                                                  color: disabledColor)),
+                                        )),
+                                  ),
+
+                                  const SizedBox(
                                     height: 80,
                                   ),
                                 ],
@@ -702,7 +756,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Widget _ratingBar(DocumentSnapshot<Object?> data) {
     return RatingBar.builder(
-      initialRating: double.parse(data['rating']),
+      // initialRating: double.parse(data['rating']),
+      initialRating: 1.2,
       minRating: 1,
       direction: Axis.horizontal,
       allowHalfRating: true,
@@ -720,6 +775,182 @@ class _ProductDetailState extends State<ProductDetail> {
         });
       },
       updateOnDrag: true,
+    );
+  }
+
+  _addTOCart({required ProductProvider productProvider}) {
+    return BottomAppBar(
+      child: Padding(
+        padding: (productProvider.productData!['seller_uid'] ==
+                firebaseUser.user!.uid)
+            ? EdgeInsets.zero
+            : const EdgeInsets.all(16),
+        child: (productProvider.productData!['seller_uid'] ==
+                firebaseUser.user!.uid)
+            ? null
+            : Row(children: [
+                Expanded(
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(secondaryColor)),
+                      onPressed: () {
+                        firebaseUser.updateCart(
+                          context: context,
+                          productId: productProvider.productData!.id,
+                          isAddToCart: true,
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.shopping_cart_rounded,
+                              size: 16,
+                              color: whiteColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Add To Cart',
+                            )
+                          ],
+                        ),
+                      )),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(secondaryColor)),
+                      // onPressed: () async {
+                      //   var productProvider = Provider.of<ProductProvider>(
+                      //       context,
+                      //       listen: false);
+                      //   final numberFormat = NumberFormat('##,##,##0');
+                      //   var data = productProvider.productData;
+                      //   //if(point == 100){
+                      //   // convert point into money}
+                      //   //then substract money from total amount i.e double.parse(data!['price'].toString())
+                      //   final result = await Esewa.i.init(
+                      //       context: context,
+                      //       eSewaConfig: ESewaConfig.dev(
+                      //         su: 'https://www.marvel.com/hello',
+                      //         // amt: double.parse(data!['price'].toString()),
+                      //         amt: 100,
+                      //         fu: 'https://www.marvel.com/hello',
+                      //         pid: DateTime.now().toIso8601String(),
+                      //       ),
+                      //       walletPageContent: EsewaPageContent(
+                      //         appBar: AppBar(
+                      //             systemOverlayStyle:
+                      //                 const SystemUiOverlayStyle(
+                      //               statusBarColor: Colors.transparent,
+                      //               statusBarIconBrightness: Brightness
+                      //                   .dark, // For Android (dark icons)
+                      //               statusBarBrightness: Brightness
+                      //                   .light, // For iOS (dark icons)
+                      //             ),
+                      //             elevation: 1,
+                      //             leading: Builder(builder: (context) {
+                      //               return IconButton(
+                      //                   onPressed: () {
+                      //                     Navigator.pop(context);
+                      //                   },
+                      //                   icon: const Icon(
+                      //                     Icons.arrow_back_ios_new,
+                      //                     color: Colors.white,
+                      //                   ));
+                      //             }),
+                      //             title: Text(
+                      //               data!['title'].toString(),
+                      //               style: TextStyle(fontSize: 18),
+                      //             ),
+                      //             iconTheme:
+                      //                 IconThemeData(color: Colors.green)),
+                      //         progressLoader: CircularProgressIndicator(),
+                      //       ));
+                      //
+                      //   if (result.data != null && result.error == null) {
+                      //     if (mounted) {
+                      //       creditPoint = creditPoint + 1;
+                      //       double getPrice =
+                      //           double.parse(data!['price'].toString());
+                      //       double getRewards = (getPrice / 100) * 5.0;
+                      //       rewards = rewards + getRewards;
+                      //       print(getRewards);
+                      //       firebaseUser.updateCreditPoint(
+                      //         context,
+                      //         {
+                      //           'credit_point': creditPoint,
+                      //         },
+                      //       );
+                      //       firebaseUser.updateCreditPoint(
+                      //         context,
+                      //         {
+                      //           'rewards_point': rewards,
+                      //         },
+                      //       );
+                      //     }
+                      //   }
+                      //
+                      //   if (mounted) {
+                      //     creditPoint = creditPoint + 1;
+                      //     double getPrice =
+                      //         double.parse(data!['price'].toString());
+                      //     double getRewards = (getPrice / 100) * 5.0;
+                      //     rewards = rewards + getRewards;
+                      //     print(getRewards);
+                      //     firebaseUser.updateCreditPoint(
+                      //       context,
+                      //       {
+                      //         'credit_point': creditPoint,
+                      //       },
+                      //     );
+                      //     firebaseUser.updateCreditPoint(
+                      //       context,
+                      //       {
+                      //         'rewards_point': rewards,
+                      //       },
+                      //     );
+                      //   }
+                      // },
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return PaymentScreen();
+                        }));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_shopping_cart,
+                              size: 16,
+                              color: whiteColor,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Buy',
+                            )
+                          ],
+                        ),
+                      )),
+                )
+              ]),
+      ),
     );
   }
 
@@ -822,28 +1053,22 @@ class _ProductDetailState extends State<ProductDetail> {
             style: TextStyle(color: blackColor),
           ),
           actions: [
-            IconButton(
-              icon: Icon(
-                Icons.share_outlined,
-                color: blackColor,
-              ),
-              onPressed: () {},
-            ),
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    isLiked = !isLiked;
-                  });
-                  firebaseUser.updateFavourite(
-                    context: context,
-                    isLiked: isLiked,
-                    productId: data.id,
-                  );
-                },
-                color: isLiked ? secondaryColor : disabledColor,
-                icon: Icon(
-                  isLiked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-                ))
+            if (widget.byAdmin == false)
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isLiked = !isLiked;
+                    });
+                    firebaseUser.updateFavourite(
+                      context: context,
+                      isLiked: isLiked,
+                      productId: data.id,
+                    );
+                  },
+                  color: isLiked ? secondaryColor : disabledColor,
+                  icon: Icon(
+                    isLiked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                  ))
           ],
         ),
         body: _body(
@@ -855,6 +1080,136 @@ class _ProductDetailState extends State<ProductDetail> {
             numberFormat: numberFormat),
         bottomSheet: _loading
             ? SizedBox()
-            : _bottomSheet(productProvider: productProvider));
+            : widget.isDetailPage == true
+                ? Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(secondaryColor)),
+                          onPressed: () async {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add_shopping_cart,
+                                  size: 16,
+                                  color: whiteColor,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'Buy',
+                                )
+                              ],
+                            ),
+                          )),
+                    ),
+                  )
+                : widget.byAdmin != null && widget.byAdmin == true
+                    ? _addTOCart(productProvider: productProvider)
+                    : _bottomSheet(productProvider: productProvider));
+  }
+
+  // Function to show the comment bottom sheet
+  void showCommentBottomSheet({required ProductProvider productProvider}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: commentController,
+                  decoration: const InputDecoration(
+                    hintText: 'Add a comment...',
+                  ),
+                  onSubmitted: (value) {
+                    if (commentController.text.trim().isNotEmpty) {
+                      authService.comment.add({
+                        'comment': commentController.text,
+                        'product_id': productProvider.productData!.id,
+                        'user_id': firebaseUser.user!.uid
+                      });
+                      commentController.clear();
+                      setState(() {});
+                    }
+                  },
+                ),
+                const SizedBox(height: 16.0),
+
+                // List of comments in the bottom sheet
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: authService.comment
+                          // .where('product_id',
+                          //     isEqualTo: productProvider.productData!.id)
+                          // .orderBy('posted_at')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        print(productProvider.productData!.id);
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text('Error loading products..'));
+                        }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: secondaryColor,
+                            ),
+                          );
+                        }
+                        if (snapshot.data!.docs.isEmpty) {
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height - 50,
+                            child: const Center(
+                              child: Text('No Comment...'),
+                            ),
+                          );
+                        }
+                        return Container(
+                          padding: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.size,
+                              itemBuilder: (context, index) {
+                                var data = snapshot.data!.docs[index];
+
+                                return ListTile(
+                                  title: Text(data['comment']),
+                                );
+                              }),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  // Function to add or update a comment in the list
+  void addOrUpdateComment(String newComment, String oldComment) {
+    if (oldComment != null && oldComment.isNotEmpty) {
+      // Update existing comment
+      setState(() {
+        int index = comments.indexOf(oldComment);
+        comments[index] = newComment;
+      });
+    } else {
+      // Add a new comment
+      setState(() {
+        comments.add(newComment);
+      });
+    }
   }
 }

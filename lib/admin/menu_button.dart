@@ -22,7 +22,7 @@ class _CustomSortMenuTwo extends State<SortMenuEditDelete> {
         ),
         items: [
           ...MenuItems.firstItems.map(
-            (item) => DropdownMenuItem<MenuItem>(
+            (item) => DropdownMenuItem<MenuItemB>(
               value: item,
               child: MenuItems.buildItem(item),
             ),
@@ -69,24 +69,24 @@ class _CustomSortMenuTwo extends State<SortMenuEditDelete> {
   }
 }
 
-class MenuItem {
+class MenuItemB {
   final String text;
   final IconData icon;
 
-  const MenuItem({
+  const MenuItemB({
     required this.text,
     required this.icon,
   });
 }
 
 class MenuItems {
-  static const List<MenuItem> firstItems = [
+  static const List<MenuItemB> firstItems = [
     delete,
   ];
 
-  static const delete = MenuItem(text: 'delete', icon: Icons.delete);
+  static const delete = MenuItemB(text: 'delete', icon: Icons.delete);
 
-  static Widget buildItem(MenuItem item) {
+  static Widget buildItem(MenuItemB item) {
     return Row(
       children: [
         Icon(item.icon, color: Colors.white, size: 22),
@@ -103,7 +103,7 @@ class MenuItems {
     );
   }
 
-  static onChanged(BuildContext context, MenuItem item) {
+  static onChanged(BuildContext context, MenuItemB item) {
     switch (item) {
       case MenuItems.delete:
         break;

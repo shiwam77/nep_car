@@ -30,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'NepCar',
+                  'Shopee',
                   style: TextStyle(
                     color: blackColor,
                     fontSize: 40,

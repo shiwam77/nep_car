@@ -37,9 +37,9 @@ class _LargeHeadingWidgetState extends State<LargeHeadingWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.size ?? 250,
+      height: widget.size ?? 180,
       child: Padding(
-        padding: const EdgeInsets.only(top: 100),
+        padding: const EdgeInsets.only(top: 50),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -22,6 +22,16 @@ class UserService {
     });
   }
 
+  Future<void> updateCreditPoint(
+      BuildContext context, Map<String, dynamic> data) {
+    User? user = FirebaseAuth.instance.currentUser;
+    return authService.users
+        .doc(user!.uid)
+        .update(data)
+        .then((value) {})
+        .catchError((error) {});
+  }
+
   Future<DocumentSnapshot> getUserData() async {
     DocumentSnapshot doc = await authService.users.doc(user!.uid).get();
     return doc;
@@ -88,6 +98,23 @@ class UserService {
         'favourites': FieldValue.arrayRemove([user!.uid])
       });
       customSnackBar(context: context, content: 'Removed from favourites');
+    }
+  }
+
+  updateCart(
+      {required BuildContext context,
+      required bool isAddToCart,
+      required String productId}) {
+    if (isAddToCart) {
+      authService.products.doc(productId).update({
+        'addToCart': FieldValue.arrayUnion([user!.uid])
+      });
+      customSnackBar(context: context, content: 'Added to Cart');
+    } else {
+      authService.products.doc(productId).update({
+        'addToCart': FieldValue.arrayRemove([user!.uid])
+      });
+      customSnackBar(context: context, content: 'Removed from Cart');
     }
   }
 }

@@ -57,14 +57,14 @@ class _SplashScreenState extends State<SplashScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'NepCar',
+                  'Shopee',
                   style: TextStyle(
                       color: secondaryColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 30),
                 ),
                 Text(
-                  'Sell your un-needs car here !',
+                  'Sell your un-needs here !',
                   style: TextStyle(
                     color: blackColor,
                     fontSize: 20,

@@ -11,9 +11,10 @@ import 'package:bechdal_app/screens/auth/register_screen.dart';
 import 'package:bechdal_app/screens/category/product_by_category_screen.dart';
 import 'package:bechdal_app/screens/category/subcategory_screen.dart';
 import 'package:bechdal_app/screens/chat/user_chat_screen.dart';
-import 'package:bechdal_app/screens/home_screen.dart';
 import 'package:bechdal_app/screens/location_screen.dart';
 import 'package:bechdal_app/screens/main_navigatiion_screen.dart';
+import 'package:bechdal_app/screens/marketplace_screen.dart';
+import 'package:bechdal_app/screens/order_product/order_product.dart';
 import 'package:bechdal_app/screens/post/my_post_screen.dart';
 import 'package:bechdal_app/screens/product/product_details_screen.dart';
 import 'package:bechdal_app/screens/profile_screen.dart';
@@ -22,9 +23,11 @@ import 'package:bechdal_app/screens/welcome_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import 'admin/const.dart';
+import 'e_com_by_admin/screen/ecom_home_screen.dart';
 import 'screens/auth/reset_password_screen.dart';
 import 'screens/category/category_list_screen.dart';
 import 'screens/chat/chat_screen.dart';
@@ -60,39 +63,50 @@ class Main extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-          primaryColor: blackColor,
-          backgroundColor: whiteColor,
-          fontFamily: 'Oswald',
-          scaffoldBackgroundColor: whiteColor,
-        ),
-        debugShowCheckedModeBanner: false,
-        initialRoute: SplashScreen.screenId,
-        routes: {
-          SplashScreen.screenId: (context) => const SplashScreen(),
-          LoginScreen.screenId: (context) => const LoginScreen(),
-          PhoneAuthScreen.screenId: (context) => const PhoneAuthScreen(),
-          LocationScreen.screenId: (context) => const LocationScreen(),
-          HomeScreen.screenId: (context) => const HomeScreen(),
-          WelcomeScreen.screenId: (context) => const WelcomeScreen(),
-          RegisterScreen.screenId: (context) => const RegisterScreen(),
-          EmailVerifyScreen.screenId: (context) => const EmailVerifyScreen(),
-          ResetPasswordScreen.screenId: (context) =>
-              const ResetPasswordScreen(),
-          CategoryListScreen.screenId: (context) => const CategoryListScreen(),
-          SubCategoryScreen.screenId: (context) => const SubCategoryScreen(),
-          MainNavigationScreen.screenId: (context) =>
-              const MainNavigationScreen(),
-          ChatScreen.screenId: (context) => const ChatScreen(),
-          MyPostScreen.screenId: (context) => const MyPostScreen(),
-          ProfileScreen.screenId: (context) => const ProfileScreen(),
-          SellCarForm.screenId: (context) => const SellCarForm(),
-          UserFormReview.screenId: (context) => const UserFormReview(),
-          CommonForm.screenId: (context) => const CommonForm(),
-          ProductDetail.screenId: (context) => const ProductDetail(),
-          ProductByCategory.screenId: (context) => const ProductByCategory(),
-          UserChatScreen.screenId: (context) => const UserChatScreen(),
+    return ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        splitScreenMode: false,
+        builder: (context, child) {
+          return MaterialApp(
+              theme: ThemeData(
+                primaryColor: blackColor,
+                backgroundColor: whiteColor,
+                fontFamily: 'Oswald',
+                scaffoldBackgroundColor: whiteColor,
+              ),
+              debugShowCheckedModeBanner: false,
+              initialRoute: SplashScreen.screenId,
+              routes: {
+                SplashScreen.screenId: (context) => const SplashScreen(),
+                LoginScreen.screenId: (context) => const LoginScreen(),
+                PhoneAuthScreen.screenId: (context) => const PhoneAuthScreen(),
+                LocationScreen.screenId: (context) => const LocationScreen(),
+                HomeScreen.screenId: (context) => const EcomHomeScreen(),
+                WelcomeScreen.screenId: (context) => const WelcomeScreen(),
+                RegisterScreen.screenId: (context) => const RegisterScreen(),
+                EmailVerifyScreen.screenId: (context) =>
+                    const EmailVerifyScreen(),
+                ResetPasswordScreen.screenId: (context) =>
+                    const ResetPasswordScreen(),
+                CategoryListScreen.screenId: (context) =>
+                    const CategoryListScreen(),
+                SubCategoryScreen.screenId: (context) =>
+                    const SubCategoryScreen(),
+                MainNavigationScreen.screenId: (context) =>
+                    const MainNavigationScreen(),
+                ChatScreen.screenId: (context) => const ChatScreen(),
+                MyPostScreen.screenId: (context) => const MyPostScreen(),
+                ProfileScreen.screenId: (context) => const ProfileScreen(),
+                SellCarForm.screenId: (context) => const SellCarForm(),
+                UserFormReview.screenId: (context) => const UserFormReview(),
+                CommonForm.screenId: (context) => const CommonForm(),
+                OrderForm.screenId: (context) => const OrderForm(),
+                ProductDetail.screenId: (context) => const ProductDetail(),
+                ProductByCategory.screenId: (context) =>
+                    const ProductByCategory(),
+                UserChatScreen.screenId: (context) => const UserChatScreen(),
+              });
         });
   }
 }

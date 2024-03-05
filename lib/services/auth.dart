@@ -3,6 +3,7 @@
 import 'package:bechdal_app/constants/widgets.dart';
 import 'package:bechdal_app/screens/auth/phone_otp_screen.dart';
 import 'package:bechdal_app/screens/location_screen.dart';
+import 'package:bechdal_app/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +26,11 @@ class Auth {
       FirebaseFirestore.instance.collection('products');
   CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
+  CollectionReference order = FirebaseFirestore.instance.collection('order');
+  CollectionReference comment =
+      FirebaseFirestore.instance.collection('comment');
+
+  CollectionReference addToCart = FirebaseFirestore.instance.collection('cart');
 
   Future<void> getAdminCredentialPhoneNumber(BuildContext context, user,
       {bool isAdmin = false}) async {
@@ -124,6 +130,9 @@ class Auth {
       if (userCredential != null) {
         getAdminCredentialPhoneNumber(context, userCredential.user,
             isAdmin: isAdmin);
+        UserService firebaseUser = UserService();
+        firebaseUser.updateFirebaseUser(
+            context, {'credit_point': 0, 'rewards_point': 0});
       } else {
         wrongDetailsAlertBox('Login Failed, Please retry again.', context);
       }
@@ -176,6 +185,9 @@ class Auth {
 
           user = userCredential.user;
           AppConstant.userId = user!.uid;
+          UserService firebaseUser = UserService();
+
+          firebaseUser.updateFirebaseUser(context, {'credit_point': 0});
         } on FirebaseAuthException catch (e) {
           if (e.code == 'account-exists-with-different-credential') {
             customSnackBar(
@@ -283,7 +295,9 @@ class Auth {
         'email': email,
         'mobile': '',
         'address': '',
-        'admin': isAdmin
+        'admin': isAdmin,
+        'credit_point': 0,
+        'rewards_point': 0
       }).then((value) async {
         AppConstant.userId = credential.user!.uid;
         await credential.user!.sendEmailVerification().then((value) {

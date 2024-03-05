@@ -1,13 +1,17 @@
 import 'package:bechdal_app/admin/admin_home.dart';
 import 'package:bechdal_app/admin/admin_login.dart';
 import 'package:bechdal_app/admin/admin_signup.dart';
+import 'package:bechdal_app/admin/category/category_list_screen.dart';
+import 'package:bechdal_app/admin/category/common_form.dart';
+import 'package:bechdal_app/admin/category/subcategory_screen.dart';
+import 'package:bechdal_app/admin/category/user_form_review.dart';
 import 'package:bechdal_app/admin/userlist.dart';
 import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/provider/category_provider.dart';
 import 'package:bechdal_app/provider/product_provider.dart';
 import 'package:bechdal_app/screens/auth/email_verify_screen.dart';
-import 'package:bechdal_app/screens/home_screen.dart';
 import 'package:bechdal_app/screens/location_screen.dart';
+import 'package:bechdal_app/screens/marketplace_screen.dart';
 import 'package:bechdal_app/screens/product/product_details_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,6 +72,10 @@ class Main extends StatelessWidget {
           AdminWelcomeScreen.screenId: (context) => const AdminWelcomeScreen(),
           AdminHome.screenId: (context) => const AdminHome(),
           ProductDetail.screenId: (context) => const ProductDetail(),
+          CategoryListScreen.screenId: (context) => const CategoryListScreen(),
+          SubCategoryScreen.screenId: (context) => const SubCategoryScreen(),
+          CommonForm.screenId: (context) => const CommonForm(),
+          UserFormReview.screenId: (context) => const UserFormReview(),
           AdminRegisterScreen.screenId: (context) =>
               const AdminRegisterScreen(),
           EmailVerifyScreen.screenId: (context) => const EmailVerifyScreen(),

@@ -98,7 +98,7 @@ class _UserListingState extends State<UserListing> {
   }
 
   onMenuChange(
-    MenuItem item,
+    MenuItemB item,
     data,
   ) {
     switch (item) {

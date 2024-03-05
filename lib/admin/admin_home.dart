@@ -1,3 +1,4 @@
+import 'package:bechdal_app/admin/category/category_list_screen.dart';
 import 'package:bechdal_app/admin/manage_product.dart';
 import 'package:bechdal_app/admin/userlist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,6 +81,20 @@ class _AdminHomeState extends State<AdminHome> {
               title: Text("Manage Product"),
               onTap: () {
                 Navigator.pushReplacementNamed(context, AdminHome.screenId);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.contacts),
+              title: Text("Create Product"),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CategoryListScreen(
+                      isForForm: true,
+                    ), // Replace with your product creation screen
+                  ),
+                );
               },
             ),
             ListTile(

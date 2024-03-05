@@ -46,6 +46,8 @@ class _SignUpButtonsState extends State<SignUpButtons> {
               if (user != null) {
                 authService.getAdminCredentialPhoneNumber(context, user);
               }
+            }).catchError((e) {
+              print(e);
             });
           },
           child: CustomIconButton(

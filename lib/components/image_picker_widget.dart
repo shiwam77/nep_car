@@ -38,11 +38,11 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     return Container(
       height: _image != null
           ? isUploading
-              ? 150
-              : 420
+              ? 170
+              : 460
           : _provider.imageUploadedUrls.isNotEmpty
-              ? 320
-              : 320,
+              ? 340
+              : 340,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       width: double.infinity,
       child: Column(
@@ -52,7 +52,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
           ),
           (_image != null)
               ? SizedBox(
-                  height: isUploading ? 100 : 300,
+                  height: isUploading ? 100 : 250,
                   child: isUploading
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,

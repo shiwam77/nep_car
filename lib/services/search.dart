@@ -13,6 +13,7 @@ class Search {
       {required BuildContext context,
       required List<Products> products,
       required String address,
+      bool? byAdmin = false,
       DocumentSnapshot? sellerDetails,
       required ProductProvider provider}) {
     showSearch(
@@ -28,7 +29,10 @@ class Search {
           onQueryUpdate: (s) => print(s),
           items: products,
           searchLabel: 'Search cars, mobiles, properties...',
-          suggestion: const SingleChildScrollView(child: ProductListing()),
+          suggestion: SingleChildScrollView(
+              child: ProductListing(
+            byAdmin: byAdmin,
+          )),
           failure: const Center(
             child: Text('No product found, Please check and try again..'),
           ),

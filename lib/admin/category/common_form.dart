@@ -147,7 +147,7 @@ class _CommonFormState extends State<CommonForm> {
               'posted_at': DateTime.now().microsecondsSinceEpoch,
               'favourites': [],
               'status': 'On Sale',
-              'by_admin': false
+              'by_admin': true
             });
             if (categoryProvider.imageUploadedUrls.isNotEmpty) {
               Navigator.pushNamed(context, UserFormReview.screenId);

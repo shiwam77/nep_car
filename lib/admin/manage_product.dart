@@ -30,7 +30,10 @@ class _ManageProductListingState extends State<ManageProductListing> {
     var categoryProvider = Provider.of<CategoryProvider>(context);
     final numberFormat = NumberFormat('##,##,##0');
     return StreamBuilder(
-        stream: authService.products.orderBy('posted_at').snapshots(),
+        stream: authService.products
+            .where('by_admin', isEqualTo: true)
+            .orderBy('posted_at')
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading products..'));
@@ -246,7 +249,7 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   onMenuChange(
-    MenuItem item,
+    MenuItemB item,
   ) {
     switch (item) {
       case MenuItems.delete:

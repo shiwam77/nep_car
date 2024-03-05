@@ -10,8 +10,11 @@ import 'package:provider/provider.dart';
 
 class ProductListing extends StatefulWidget {
   final bool? isProductByCategory;
+  final bool? byAdmin;
 
-  const ProductListing({Key? key, this.isProductByCategory}) : super(key: key);
+  const ProductListing(
+      {Key? key, this.isProductByCategory, this.byAdmin = false})
+      : super(key: key);
 
   @override
   State<ProductListing> createState() => _ProductListingState();
@@ -32,6 +35,7 @@ class _ProductListingState extends State<ProductListing> {
                     .orderBy('posted_at')
                     .where('category',
                         isEqualTo: categoryProvider.selectedCategory)
+                    .where('by_admin', isEqualTo: widget.byAdmin)
                     .snapshots()
                 : authService.products
                     .orderBy('posted_at')
@@ -39,8 +43,12 @@ class _ProductListingState extends State<ProductListing> {
                         isEqualTo: categoryProvider.selectedCategory)
                     .where('subcategory',
                         isEqualTo: categoryProvider.selectedSubCategory)
+                    .where('by_admin', isEqualTo: widget.byAdmin)
                     .snapshots()
-            : authService.products.orderBy('posted_at').snapshots(),
+            : authService.products
+                .orderBy('posted_at')
+                .where('by_admin', isEqualTo: widget.byAdmin)
+                .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('Error loading products..'));
@@ -104,6 +112,7 @@ class _ProductListingState extends State<ProductListing> {
                               data: data,
                               formattedPrice: formattedPrice,
                               numberFormat: numberFormat,
+                              byAdmin: widget.byAdmin,
                             );
                           }),
                     ],

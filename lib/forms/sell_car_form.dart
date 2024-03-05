@@ -164,7 +164,9 @@ class _SellCarFormState extends State<SellCarForm> {
                   : categoryProvider.imageUploadedUrls,
               'posted_at': DateTime.now().microsecondsSinceEpoch,
               'favourites': [],
-              'rating': "0.0"
+              'rating': "0.0",
+              'status': 'On Sale',
+              'by_admin': false
             });
             if (categoryProvider.imageUploadedUrls.isNotEmpty) {
               Navigator.pushNamed(context, UserFormReview.screenId);
@@ -412,7 +414,7 @@ class _SellCarFormState extends State<SellCarForm> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 TextFormField(

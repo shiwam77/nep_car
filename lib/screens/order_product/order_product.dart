@@ -1,27 +1,200 @@
-// ignore_for_file: void_checks
-
-import 'package:bechdal_app/components/bottom_nav_widget.dart';
-import 'package:bechdal_app/components/image_picker_widget.dart';
-import 'package:bechdal_app/constants/colors.dart';
-import 'package:bechdal_app/constants/validators.dart';
-import 'package:bechdal_app/constants/widgets.dart';
-import 'package:bechdal_app/forms/user_form_review.dart';
-import 'package:bechdal_app/provider/category_provider.dart';
-import 'package:bechdal_app/services/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:galleryimage/galleryimage.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class CommonForm extends StatefulWidget {
-  static const String screenId = 'common_form';
-  const CommonForm({Key? key}) : super(key: key);
+import '../../admin/menu_button.dart';
+import '../../components/bottom_nav_widget.dart';
+import '../../components/image_picker_widget.dart';
+import '../../constants/colors.dart';
+import '../../constants/validators.dart';
+import '../../constants/widgets.dart';
+import '../../provider/category_provider.dart';
+import '../../services/auth.dart';
+import '../../services/user.dart';
+
+class OrderProductScreen extends StatefulWidget {
+  const OrderProductScreen({Key? key}) : super(key: key);
 
   @override
-  State<CommonForm> createState() => _CommonFormState();
+  State<OrderProductScreen> createState() => _OrderProductScreenState();
 }
 
-class _CommonFormState extends State<CommonForm> {
+class _OrderProductScreenState extends State<OrderProductScreen> {
+  Auth authService = Auth();
+  UserService firebaseUser = UserService();
+  String address = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final numberFormat = NumberFormat('##,##,##0');
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: whiteColor,
+        title: Text(
+          'Order Your Desire Products',
+          style: TextStyle(
+            color: blackColor,
+          ),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, OrderForm.screenId);
+            },
+            child: const Icon(
+              Icons.add,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+        ],
+      ),
+      body: Flex(
+        direction: Axis.vertical,
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+                stream: authService.order
+                    .where('user_uid', isEqualTo: firebaseUser.user!.uid)
+                    .orderBy('posted_at')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                        child: Text('Error loading products..'));
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: secondaryColor,
+                      ),
+                    );
+                  }
+                  if (snapshot.data!.docs.length == 0) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height - 50,
+                      child: const Center(
+                        child: Text('No Order Created by you...'),
+                      ),
+                    );
+                  }
+                  return Container(
+                    padding: const EdgeInsets.fromLTRB(20, 5, 20, 0),
+                    child: Expanded(
+                      child: GridView.builder(
+                          scrollDirection: Axis.vertical,
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            childAspectRatio: 2 / 2,
+                            mainAxisExtent: 250,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: snapshot.data!.size,
+                          itemBuilder: (BuildContext context, int index) {
+                            var data = snapshot.data!.docs[index];
+                            return Card(
+                              elevation: 3,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(data['status']),
+                                        SortMenuEditDelete(
+                                          onChange: (value) {
+                                            onMenuChange(value, data);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                        alignment: Alignment.center,
+                                        height: 120,
+                                        child: Image.network(
+                                          data['images'][0],
+                                          fit: BoxFit.cover,
+                                        )),
+                                    Text(
+                                      data['title'],
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    Text(
+                                      data['description'],
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  onMenuChange(MenuItemB item, data) {
+    switch (item) {
+      case MenuItems.delete:
+        delete(data);
+        break;
+    }
+  }
+
+  delete(data) async {
+    FirebaseFirestore.instance
+        .runTransaction((Transaction myTransaction) async {
+      myTransaction.delete(data.reference);
+    }).then((value) {
+      setState(() {});
+    }).catchError((error) {
+      print(error);
+    });
+  }
+}
+
+class OrderForm extends StatefulWidget {
+  static const String screenId = 'order_form';
+  const OrderForm({Key? key}) : super(key: key);
+
+  @override
+  State<OrderForm> createState() => _OrderFormState();
+}
+
+class _OrderFormState extends State<OrderForm> {
   UserService firebaseUser = UserService();
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _brandController;
@@ -46,6 +219,8 @@ class _CommonFormState extends State<CommonForm> {
   late FocusNode _sqftNode;
   late TextEditingController _floorsController;
   late FocusNode _floorsNode;
+
+  Auth authService = Auth();
 
   List accessoriesList = ['Mobile', 'Tablet'];
   List tabletList = ['IPads', 'Samsung', 'Other Tablets'];
@@ -117,7 +292,7 @@ class _CommonFormState extends State<CommonForm> {
           iconTheme: IconThemeData(color: blackColor),
           backgroundColor: whiteColor,
           title: Text(
-            '${categoryProvider.selectedCategory} Details',
+            'Create Order',
             style: TextStyle(color: blackColor),
           )),
       body: formBodyWidget(context, categoryProvider),
@@ -125,9 +300,11 @@ class _CommonFormState extends State<CommonForm> {
         buttonText: 'Next',
         validator: true,
         onPressed: () async {
+          Map<String, dynamic> formData = {};
+
           if (_formKey.currentState!.validate()) {
-            categoryProvider.formData.addAll({
-              'seller_uid': firebaseUser.user!.uid,
+            formData.addAll({
+              'user_uid': firebaseUser.user!.uid,
               'category': categoryProvider.selectedCategory,
               'subcategory': categoryProvider.selectedSubCategory,
               'brand': _brandController.text,
@@ -141,16 +318,18 @@ class _CommonFormState extends State<CommonForm> {
               'title': _titleController.text,
               'description': _descriptionController.text,
               'price': _priceController.text,
+              'status': 'Pending',
               'images': categoryProvider.imageUploadedUrls.isEmpty
                   ? ''
                   : categoryProvider.imageUploadedUrls,
               'posted_at': DateTime.now().microsecondsSinceEpoch,
               'favourites': [],
-              'status': 'On Sale',
-              'by_admin': false
             });
             if (categoryProvider.imageUploadedUrls.isNotEmpty) {
-              Navigator.pushNamed(context, UserFormReview.screenId);
+              authService.order.add(formData).then((value) {
+                Navigator.pop(context);
+              });
+              // Navigator.pushNamed(context, UserFormReview.screenId);
             } else {
               customSnackBar(
                   context: context,
@@ -224,7 +403,7 @@ class _CommonFormState extends State<CommonForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${categoryProvider.selectedSubCategory}',
+                  'Create Order',
                   style: TextStyle(
                     color: blackColor,
                     fontWeight: FontWeight.bold,
@@ -604,30 +783,30 @@ class _CommonFormState extends State<CommonForm> {
                 const SizedBox(
                   height: 20,
                 ),
-                TextFormField(
-                    controller: _priceController,
-                    focusNode: _priceNode,
-                    validator: (value) {
-                      return validatePrice(value);
-                    },
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      prefix: const Text('₹ '),
-                      labelText: 'Price*',
-                      labelStyle: TextStyle(
-                        color: greyColor,
-                        fontSize: 14,
-                      ),
-                      errorStyle:
-                          const TextStyle(color: Colors.red, fontSize: 10),
-                      contentPadding: const EdgeInsets.all(15),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: disabledColor)),
-                    )),
-                const SizedBox(
-                  height: 20,
-                ),
+                // TextFormField(
+                //     controller: _priceController,
+                //     focusNode: _priceNode,
+                //     validator: (value) {
+                //       return validatePrice(value);
+                //     },
+                //     keyboardType: TextInputType.number,
+                //     decoration: InputDecoration(
+                //       prefix: const Text('₹ '),
+                //       labelText: 'Price*',
+                //       labelStyle: TextStyle(
+                //         color: greyColor,
+                //         fontSize: 14,
+                //       ),
+                //       errorStyle:
+                //           const TextStyle(color: Colors.red, fontSize: 10),
+                //       contentPadding: const EdgeInsets.all(15),
+                //       border: OutlineInputBorder(
+                //           borderRadius: BorderRadius.circular(8),
+                //           borderSide: BorderSide(color: disabledColor)),
+                //     )),
+                // const SizedBox(
+                //   height: 20,
+                // ),
                 InkWell(
                   onTap: () async {
                     if (kDebugMode) {

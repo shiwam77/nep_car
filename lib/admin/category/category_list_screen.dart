@@ -1,6 +1,6 @@
+import 'package:bechdal_app/admin/category/product_by_category_screen.dart';
+import 'package:bechdal_app/admin/category/subcategory_screen.dart';
 import 'package:bechdal_app/provider/category_provider.dart';
-import 'package:bechdal_app/screens/category/product_by_category_screen.dart';
-import 'package:bechdal_app/screens/category/subcategory_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

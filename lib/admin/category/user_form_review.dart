@@ -2,7 +2,6 @@ import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/constants/validators.dart';
 import 'package:bechdal_app/constants/widgets.dart';
 import 'package:bechdal_app/screens/location_screen.dart';
-import 'package:bechdal_app/screens/main_navigatiion_screen.dart';
 import 'package:bechdal_app/services/auth.dart';
 import 'package:bechdal_app/services/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,8 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../components/bottom_nav_widget.dart';
-import '../provider/category_provider.dart';
+import '../../components/bottom_nav_widget.dart';
+import '../../provider/category_provider.dart';
+import '../admin_home.dart';
 
 class UserFormReview extends StatefulWidget {
   static const screenId = 'user_form_review_screen';
@@ -103,8 +103,8 @@ class _UserFormReviewState extends State<UserFormReview> {
       categoryProvider.clearData();
       customSnackBar(
           context: context, content: 'We have added your product to database');
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          MainNavigationScreen.screenId, (route) => false);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(AdminHome.screenId, (route) => false);
     }).catchError((error) {
       if (kDebugMode) {
         print(error);

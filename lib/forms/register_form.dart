@@ -1,11 +1,8 @@
-import 'package:bechdal_app/components/custom_icon_button.dart';
 import 'package:bechdal_app/components/signup_buttons.dart';
 import 'package:bechdal_app/constants/colors.dart';
 import 'package:bechdal_app/constants/validators.dart';
 import 'package:bechdal_app/constants/widgets.dart';
-import 'package:bechdal_app/screens/auth/phone_auth_screen.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth.dart';
@@ -67,7 +64,7 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height - 250,
+      height: MediaQuery.of(context).size.height - 200,
       child: Column(
         children: [
           Padding(
@@ -267,13 +264,11 @@ class _RegisterFormState extends State<RegisterForm> {
           Text(
             'Or',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               color: greyColor,
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const Spacer(),
           const SignUpButtons(),
         ],
       ),
